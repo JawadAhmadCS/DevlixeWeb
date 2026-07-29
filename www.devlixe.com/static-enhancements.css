@@ -95,6 +95,71 @@
   box-shadow: 0 0 0 3px rgba(60, 207, 192, 0.38);
 }
 
+.devlixe-process .devlixe-process__chip {
+  width: fit-content;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.devlixe-process .devlixe-process__title {
+  max-width: 1100px;
+  margin: 20px auto;
+  color: #fff;
+  font-size: clamp(36px, 4.3vw, 52px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  text-align: center;
+}
+
+.devlixe-process .devlixe-process__title strong {
+  color: #3ccfc0;
+}
+
+.devlixe-process .devlixe-process__description {
+  max-width: 720px;
+  margin: 42px auto 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: clamp(17px, 2vw, 21px);
+  line-height: 1.45;
+  text-align: center;
+}
+
+.devlixe-process .devlixe-process-step p {
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.55;
+}
+
+.devlixe-process-ready .devlixe-process-connector {
+  opacity: 0;
+  clip-path: inset(0 0 100% 0);
+  filter: drop-shadow(0 0 0 rgba(59, 206, 191, 0));
+  transition:
+    clip-path 900ms linear,
+    opacity 240ms ease,
+    filter 900ms ease;
+}
+
+.devlixe-process-ready .devlixe-process-reveal {
+  opacity: 0;
+  transform: translateY(50px);
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 800ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--process-reveal-delay, 0ms);
+}
+
+.devlixe-process-ready .devlixe-process-step.is-visible .devlixe-process-connector {
+  opacity: 1;
+  clip-path: inset(0 0 0 0);
+  filter: drop-shadow(0 0 15px rgba(59, 206, 191, 0.58));
+}
+
+.devlixe-process-ready .devlixe-process-step.is-visible .devlixe-process-reveal {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .devlixe-simple-slider {
   overflow: hidden;
 }
@@ -165,6 +230,15 @@
 }
 
 @media (max-width: 767px) {
+  .devlixe-process .devlixe-process__title {
+    margin-top: 22px;
+    font-size: clamp(34px, 10vw, 46px);
+  }
+
+  .devlixe-process .devlixe-process__description {
+    margin-top: 28px;
+  }
+
   .devlixe-logo-marquee {
     -webkit-mask-image: linear-gradient(
       to right,
@@ -193,7 +267,9 @@
   }
 
   .devlixe-simple-slider .swiper-wrapper,
-  .devlixe-logo-marquee__logo {
+  .devlixe-logo-marquee__logo,
+  .devlixe-process-ready .devlixe-process-connector,
+  .devlixe-process-ready .devlixe-process-reveal {
     transition: none;
   }
 }

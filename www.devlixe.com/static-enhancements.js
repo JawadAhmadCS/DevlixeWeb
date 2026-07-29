@@ -455,6 +455,113 @@
     activateTabs(tabList, panels, "block");
   }
 
+  function initProcessSection() {
+    var section = Array.from(document.querySelectorAll("section")).find(
+      function (item) {
+        var chip = item.querySelector(".chip");
+        return chip && chip.textContent.trim() === "Our Process";
+      },
+    );
+    if (!section || section.dataset.processEnhanced === "true") return;
+
+    var title = Array.from(section.querySelectorAll("h1, h2")).find(function (
+      item,
+    ) {
+      return item.textContent.includes("How We Bring Your");
+    });
+    var description = Array.from(section.querySelectorAll("p")).find(function (
+      item,
+    ) {
+      return item.textContent
+        .trim()
+        .startsWith("We believe in transparent");
+    });
+    var stepsContainer = Array.from(section.querySelectorAll("div")).find(
+      function (item) {
+        var children = directChildren(item, "div");
+        return (
+          item.classList.contains("max-w-[970px]") &&
+          children.length === 6 &&
+          children.every(function (child) {
+            return child.querySelector("h3");
+          })
+        );
+      },
+    );
+    var steps = stepsContainer
+      ? directChildren(stepsContainer, "div")
+      : [];
+
+    if (!title || !description || steps.length !== 6) return;
+
+    section.dataset.processEnhanced = "true";
+    section.classList.add("devlixe-process");
+    section.querySelector(".chip").classList.add("devlixe-process__chip");
+    title.classList.add("devlixe-process__title");
+    description.classList.add("devlixe-process__description");
+
+    steps.forEach(function (step) {
+      var connector = directChildren(step, "div").find(function (item) {
+        return item.querySelector('img[alt="progress"]');
+      });
+      var row = directChildren(step, "div").find(function (item) {
+        return (
+          item.classList.contains("flex") &&
+          item.classList.contains("items-center")
+        );
+      });
+      var textColumn = row && row.firstElementChild;
+      var imageColumn = row && row.lastElementChild;
+      var revealItems = textColumn
+        ? Array.from(textColumn.children).filter(function (item) {
+            return item.textContent.trim().length > 0;
+          })
+        : [];
+
+      step.classList.add("devlixe-process-step");
+      if (connector) connector.classList.add("devlixe-process-connector");
+
+      if (imageColumn && imageColumn !== textColumn) {
+        revealItems.push(imageColumn);
+      }
+
+      revealItems.forEach(function (item, index) {
+        item.classList.add("devlixe-process-reveal");
+        item.style.setProperty(
+          "--process-reveal-delay",
+          180 + index * 130 + "ms",
+        );
+      });
+    });
+
+    section.classList.add("devlixe-process-ready");
+
+    if (reducedMotion || !("IntersectionObserver" in window)) {
+      steps.forEach(function (step) {
+        step.classList.add("is-visible");
+      });
+      return;
+    }
+
+    var observer = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        });
+      },
+      {
+        threshold: 0.18,
+        rootMargin: "0px 0px -12% 0px",
+      },
+    );
+
+    steps.forEach(function (step) {
+      observer.observe(step);
+    });
+  }
+
   function createSliderControls(root, previous, next, getStatus) {
     var controls = document.createElement("div");
     var previousButton = document.createElement("button");
@@ -589,6 +696,7 @@
     initHeroCarousel();
     initIndustryTabs();
     initServiceTabs();
+    initProcessSection();
     initSliders();
     initFileUploads();
   }
