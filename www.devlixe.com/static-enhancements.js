@@ -588,6 +588,137 @@
     };
   }
 
+  function initPortfolioSlider(root) {
+    if (!root || root.dataset.enhanced === "true") return;
+
+    var wrapper = root.querySelector(".swiper-wrapper");
+    var slides = wrapper ? directChildren(wrapper, ".swiper-slide") : [];
+    var section = root.closest(".PortfolioSlider");
+    var previousButton = section
+      ? section.querySelector(".custom-swiper-prev")
+      : null;
+    var nextButton = section
+      ? section.querySelector(".custom-swiper-next")
+      : null;
+    if (!wrapper || slides.length < 2 || !section) return;
+
+    root.dataset.enhanced = "true";
+    root.classList.add("devlixe-portfolio-slider");
+    root.setAttribute("role", "region");
+    root.setAttribute("aria-label", "Customer stories");
+    root.setAttribute("tabindex", "0");
+
+    var activeIndex = 0;
+    var pointerStartX = null;
+    var resizeFrame = null;
+
+    function positionSlider(instant) {
+      var activeSlide = slides[activeIndex];
+      if (!activeSlide) return;
+
+      if (instant) wrapper.style.transition = "none";
+      var rootRect = root.getBoundingClientRect();
+      var slideRect = activeSlide.getBoundingClientRect();
+      var currentTransform =
+        window.getComputedStyle(wrapper).transform === "none"
+          ? 0
+          : new DOMMatrix(window.getComputedStyle(wrapper).transform).m41;
+      var slideCenter =
+        slideRect.left - rootRect.left - currentTransform + slideRect.width / 2;
+      var target = rootRect.width / 2 - slideCenter;
+      wrapper.style.transform = "translate3d(" + target + "px, 0, 0)";
+
+      if (instant) {
+        window.requestAnimationFrame(function () {
+          wrapper.style.transition = "";
+        });
+      }
+    }
+
+    function updateButtons() {
+      if (previousButton) {
+        previousButton.disabled = activeIndex === 0;
+        previousButton.setAttribute(
+          "aria-disabled",
+          activeIndex === 0 ? "true" : "false",
+        );
+      }
+      if (nextButton) {
+        nextButton.disabled = activeIndex === slides.length - 1;
+        nextButton.setAttribute(
+          "aria-disabled",
+          activeIndex === slides.length - 1 ? "true" : "false",
+        );
+      }
+    }
+
+    function show(index, instant) {
+      activeIndex = Math.max(0, Math.min(index, slides.length - 1));
+      slides.forEach(function (slide, slideIndex) {
+        var isActive = slideIndex === activeIndex;
+        slide.classList.toggle("is-active", isActive);
+        slide.setAttribute("aria-hidden", isActive ? "false" : "true");
+      });
+      updateButtons();
+      positionSlider(Boolean(instant));
+    }
+
+    function previous() {
+      show(activeIndex - 1);
+    }
+
+    function next() {
+      show(activeIndex + 1);
+    }
+
+    if (previousButton) {
+      previousButton.type = "button";
+      previousButton.setAttribute("aria-label", "Previous customer story");
+      previousButton.addEventListener("click", previous);
+    }
+    if (nextButton) {
+      nextButton.type = "button";
+      nextButton.setAttribute("aria-label", "Next customer story");
+      nextButton.addEventListener("click", next);
+    }
+
+    root.addEventListener("keydown", function (event) {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        previous();
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault();
+        next();
+      }
+    });
+
+    root.addEventListener("pointerdown", function (event) {
+      pointerStartX = event.clientX;
+    });
+    root.addEventListener("pointerup", function (event) {
+      if (pointerStartX === null) return;
+      var distance = event.clientX - pointerStartX;
+      pointerStartX = null;
+      if (Math.abs(distance) < 50) return;
+      if (distance > 0) previous();
+      else next();
+    });
+    root.addEventListener("pointercancel", function () {
+      pointerStartX = null;
+    });
+
+    function handleResize() {
+      if (resizeFrame) window.cancelAnimationFrame(resizeFrame);
+      resizeFrame = window.requestAnimationFrame(function () {
+        positionSlider(true);
+        resizeFrame = null;
+      });
+    }
+
+    window.addEventListener("resize", handleResize, { passive: true });
+    show(0, true);
+  }
+
   function initSimpleSlider(root, autoplay) {
     if (!root || root.dataset.enhanced === "true") return;
 
@@ -646,9 +777,14 @@
   }
 
   function initSliders() {
+    var portfolioSlider = document.querySelector(".PortfolioSlider .swiper");
+    initPortfolioSlider(portfolioSlider);
+
     var sliders = Array.from(document.querySelectorAll(".swiper"));
     sliders.forEach(function (slider, index) {
-      initSimpleSlider(slider, index === 0 ? 9000 : 0);
+      if (slider !== portfolioSlider) {
+        initSimpleSlider(slider, index === 0 ? 9000 : 0);
+      }
     });
   }
 

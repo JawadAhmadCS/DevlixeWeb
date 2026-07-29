@@ -160,6 +160,70 @@
   transform: translateY(0);
 }
 
+.devlixe-portfolio-slider {
+  overflow: hidden;
+  padding: 8px 0 18px;
+  touch-action: pan-y;
+}
+
+.devlixe-portfolio-slider .swiper-wrapper {
+  display: flex;
+  align-items: stretch;
+  gap: 40px;
+  transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.devlixe-portfolio-slider .swiper-slide {
+  display: flex;
+  flex: 0 0 min(1000px, 70vw);
+  width: min(1000px, 70vw) !important;
+  min-width: min(1000px, 70vw) !important;
+  height: auto;
+  margin: 0 !important;
+  opacity: 0.52;
+  transform: scale(0.965);
+  transition:
+    opacity 420ms ease,
+    transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.devlixe-portfolio-slider .swiper-slide.is-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.devlixe-portfolio-slider .swiper-slide > div {
+  width: 100%;
+}
+
+.PortfolioSlider .custom-swiper-prev,
+.PortfolioSlider .custom-swiper-next {
+  position: relative;
+  z-index: 12;
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 24px rgba(1, 32, 68, 0.16);
+  cursor: pointer;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease,
+    background-color 180ms ease;
+}
+
+.PortfolioSlider .custom-swiper-prev:hover:not(:disabled),
+.PortfolioSlider .custom-swiper-next:hover:not(:disabled) {
+  background: #36c7ba;
+  transform: translateY(-2px);
+}
+
+.PortfolioSlider .custom-swiper-prev:disabled,
+.PortfolioSlider .custom-swiper-next:disabled {
+  opacity: 0.42;
+  cursor: default;
+}
+
 .devlixe-simple-slider {
   overflow: hidden;
 }
@@ -230,6 +294,22 @@
 }
 
 @media (max-width: 767px) {
+  .devlixe-portfolio-slider .swiper-wrapper {
+    gap: 16px;
+  }
+
+  .devlixe-portfolio-slider .swiper-slide {
+    flex-basis: 90vw;
+    width: 90vw !important;
+    min-width: 90vw !important;
+  }
+
+  .PortfolioSlider .custom-swiper-prev,
+  .PortfolioSlider .custom-swiper-next {
+    width: 44px;
+    height: 44px;
+  }
+
   .devlixe-process .devlixe-process__title {
     margin-top: 22px;
     font-size: clamp(34px, 10vw, 46px);
@@ -266,6 +346,8 @@
     animation-play-state: paused;
   }
 
+  .devlixe-portfolio-slider .swiper-wrapper,
+  .devlixe-portfolio-slider .swiper-slide,
   .devlixe-simple-slider .swiper-wrapper,
   .devlixe-logo-marquee__logo,
   .devlixe-process-ready .devlixe-process-connector,
