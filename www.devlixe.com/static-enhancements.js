@@ -11,6 +11,405 @@
     });
   }
 
+  function getHeaderMegaMenuData() {
+    return {
+      Services: {
+        featured: true,
+        categories: [
+          {
+            label: "AI Agents",
+            hero: {
+              title: "AI Voice Agents",
+              badge: "AI Voice",
+              description: "Your AI answers every call 24/7",
+              href: "ai-agent-development.html",
+            },
+            items: [
+              { icon: "phone-in", color: "#ff2438", title: "Inbound Agents", description: "Answer and qualify every incoming lead", href: "inbound-voice-agent.html" },
+              { icon: "phone-out", color: "#00b83e", title: "Outbound Agents", description: "Reach out and close more deals automatically", href: "outbound-voice-agent.html" },
+              { icon: "bot", color: "#1559c5", title: "AI Agent Development", description: "Build agents that handle workflows intelligently", href: "ai-agent-development.html" },
+            ],
+          },
+          {
+            label: "Conversational AI",
+            hero: {
+              title: "AI Chatbot Development",
+              badge: "Chatbots",
+              description: "Automate support and customer conversations",
+              href: "ai-chatbot-development.html",
+            },
+            items: [
+              { icon: "message", color: "#16a8d8", title: "AI Chatbot", description: "Give customers helpful answers around the clock", href: "ai-chatbot-development.html" },
+              { icon: "calendar", color: "#8b5cf6", title: "Appointment Scheduling", description: "Book and manage appointments without manual work", href: "ai-appointment-scheduling-assistant.html" },
+              { icon: "whatsapp", color: "#12b76a", title: "WhatsApp Automation", description: "Automate conversations on your customers' favorite channel", href: "whatsapp-chatbot-automation.html" },
+            ],
+          },
+          {
+            label: "Custom AI Development",
+            hero: {
+              title: "Custom AI Development",
+              badge: "AI Product",
+              description: "Build AI solutions around your business workflow",
+              href: "ai-poc-development.html",
+            },
+            items: [
+              { icon: "rocket", color: "#f97316", title: "AI MVP Development", description: "Validate and launch your AI product faster", href: "ai-poc-development.html" },
+              { icon: "sparkles", color: "#7c3aed", title: "Generative AI", description: "Create intelligent products with generative AI", href: "generative-ai-development-solutions.html" },
+              { icon: "brain", color: "#2563eb", title: "LLM Integration", description: "Connect powerful language models to your systems", href: "large-language-model-development.html" },
+              { icon: "plug", color: "#0ea5a4", title: "GPT Integration", description: "Add reliable GPT capabilities to your product", href: "chat-gpt-integration.html" },
+            ],
+          },
+        ],
+      },
+      Solutions: {
+        featured: false,
+        categories: [
+          {
+            label: "Industry",
+            items: [
+              { icon: "health", color: "#58c91f", title: "Healthcare", description: "Improve patient support with AI-powered precision", href: "ai-healthcare-solutions.html" },
+              { icon: "home", color: "#10bfc8", title: "Real Estate", description: "Engage every lead and qualify prospects automatically", href: "ai-real-estate-solutions.html" },
+              { icon: "megaphone", color: "#1559c5", title: "Marketing", description: "Create content and optimize campaigns using AI", href: "ai-marketing-automation.html" },
+              { icon: "book", color: "#b6e51d", title: "Education", description: "Personalize learning and automate student support", href: "ai-in-education.html" },
+              { icon: "shopping", color: "#f97316", title: "Ecommerce", description: "Build smarter shopping and support experiences", href: "ecommerce-ai-solutions.html" },
+              { icon: "landmark", color: "#16c89a", title: "Fintech & Banking", description: "Automate service securely across financial workflows", href: "case-studies.html" },
+              { icon: "headset", color: "#8b5cf6", title: "Healthcare Voice Agents", description: "Handle patient calls and appointment requests", href: "ai-healthcare-solutions.html" },
+              { icon: "building", color: "#f59e0b", title: "Real Estate Voice Agents", description: "Respond to property inquiries and schedule viewings", href: "ai-property-virtual-assistant.html" },
+            ],
+          },
+        ],
+      },
+      Resources: {
+        featured: true,
+        categories: [
+          {
+            label: "Learning & Insights",
+            hero: { title: "Case Studies", description: "Real-world AI success stories", href: "case-studies.html" },
+            items: [
+              { icon: "file", color: "#6b7280", title: "Blogs", description: "Stay updated with the latest AI trends and use cases", href: "blogs.html" },
+              { icon: "podcast", color: "#08a7c7", title: "Podcasts", description: "Hear practical insights from technology innovators", href: "podcasts.html" },
+              { icon: "book", color: "#2563eb", title: "Ebook", description: "Explore in-depth guides to building with AI", href: "blogs.html" },
+            ],
+          },
+        ],
+      },
+    };
+  }
+
+  function getHeaderMegaIcon(iconName) {
+    var paths = {
+      "phone-in": '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.35 1.78.69 2.62a2 2 0 0 1-.45 2.11L8.09 9.72a16 16 0 0 0 6.19 6.19l1.27-1.27a2 2 0 0 1 2.11-.45c.84.34 1.72.57 2.62.69A2 2 0 0 1 22 16.92Z"/><path d="m15 3 4 4m0-4v4h-4"/>',
+      "phone-out": '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.35 1.78.69 2.62a2 2 0 0 1-.45 2.11L8.09 9.72a16 16 0 0 0 6.19 6.19l1.27-1.27a2 2 0 0 1 2.11-.45c.84.34 1.72.57 2.62.69A2 2 0 0 1 22 16.92Z"/><path d="m19 3-4 4m0-4v4h4"/>',
+      bot: '<rect width="16" height="12" x="4" y="8" rx="2"/><path d="M9 8V5h6v3M12 5V3M8 13h.01M16 13h.01M9 17h6"/>',
+      message: '<path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"/><path d="M8 10h8M8 14h5"/>',
+      calendar: '<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/>',
+      whatsapp: '<path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.45L3 21l2.05-5.4A8.5 8.5 0 1 1 21 11.5Z"/><path d="M8.2 7.8c.6 3.3 2.7 5.4 6 6l1.1-1.2 2 .5c-.2 2-1.4 3-3.2 2.7-4.2-.7-7.2-3.7-7.9-7.9-.3-1.8.7-3 2.7-3.2l.5 2Z"/>',
+      rocket: '<path d="M4.5 16.5c-1.5 1.3-2 5-2 5s3.7-.5 5-2c.8-.9.8-2.3-.1-3.1a2.2 2.2 0 0 0-2.9.1Z"/><path d="m9 15-3-3s3.5-6.5 7-9c2.4-1.7 6-1 8-1-0 2 .7 5.6-1 8-2.5 3.5-9 7-9 7Z"/><path d="M15 7h.01M9 15l-1 4 4-1"/>',
+      sparkles: '<path d="m12 3-1.5 4.5L6 9l4.5 1.5L12 15l1.5-4.5L18 9l-4.5-1.5ZM5 15l-.8 2.2L2 18l2.2.8L5 21l.8-2.2L8 18l-2.2-.8ZM19 14l-.7 1.8-1.8.7 1.8.7.7 1.8.7-1.8 1.8-.7-1.8-.7Z"/>',
+      brain: '<path d="M9.5 4A3.5 3.5 0 0 0 6 7.5c0 .2 0 .4.1.6A3.5 3.5 0 0 0 4 14.5 3.5 3.5 0 0 0 9.5 18M14.5 4A3.5 3.5 0 0 1 18 7.5c0 .2 0 .4-.1.6a3.5 3.5 0 0 1 2.1 6.4 3.5 3.5 0 0 1-5.5 3.5M9.5 4v16M14.5 4v16M6.1 8.1c.9.2 1.7.7 2.2 1.4M17.9 8.1c-.9.2-1.7.7-2.2 1.4M4.5 14.5c1.2-.5 2.5-.4 3.5.3M19.5 14.5c-1.2-.5-2.5-.4-3.5.3"/>',
+      plug: '<path d="m12 22 1-5M9 8V2M15 8V2M18 8v4a6 6 0 0 1-12 0V8ZM4 8h16"/>',
+      health: '<path d="M8 3h8l1 4h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h3Z"/><path d="M9 3v4h6V3M12 10v8M8 14h8"/>',
+      home: '<path d="m3 11 9-8 9 8"/><path d="M5 10v11h14V10M9 21v-6h6v6M8 10h8"/>',
+      megaphone: '<path d="m3 11 18-5v12L3 13Z"/><path d="M11.6 15.4 13 21H7l-1.5-7M21 10v4M4 9v6"/>',
+      book: '<path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2Z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7Z"/>',
+      shopping: '<path d="M6 8 8 3h8l2 5M3 8h18l-1 13H4Z"/><path d="M9 12v1a3 3 0 0 0 6 0v-1"/>',
+      landmark: '<path d="m3 10 9-6 9 6M5 10v8M9 10v8M15 10v8M19 10v8M3 18h18M2 22h20"/>',
+      headset: '<path d="M4 14v-2a8 8 0 0 1 16 0v2M18 19c0 1.7-1.3 3-3 3h-3"/><path d="M4 14h3v6H5a2 2 0 0 1-2-2v-2a2 2 0 0 1 1-2ZM20 14h-3v6h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-1-2Z"/>',
+      building: '<rect width="16" height="20" x="4" y="2" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01"/>',
+      file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h6"/>',
+      podcast: '<circle cx="12" cy="11" r="1"/><path d="M8.5 14.5a5 5 0 1 1 7 0M5.6 17.4a9 9 0 1 1 12.8 0M10 18h4l1 4H9Z"/>',
+    };
+
+    return (
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+      'stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' +
+      (paths[iconName] || paths.sparkles) +
+      "</svg>"
+    );
+  }
+
+  function initHeaderMegaMenus() {
+    var header = document.querySelector("header");
+    var nav = header && header.querySelector("nav");
+    if (!header || !nav || header.dataset.megaEnhanced === "true") return;
+
+    var menuData = getHeaderMegaMenuData();
+    var menuNames = Object.keys(menuData);
+    var buttons = Array.from(nav.querySelectorAll("button")).filter(function (button) {
+      return menuNames.indexOf(button.textContent.trim()) !== -1;
+    });
+    if (buttons.length !== menuNames.length) return;
+
+    header.dataset.megaEnhanced = "true";
+    var shell = document.createElement("div");
+    shell.className = "devlixe-mega";
+    header.appendChild(shell);
+    var panelMap = {};
+    var activeName = "";
+    var suppressFocusOpen = false;
+
+    function createItemLink(item) {
+      var link = document.createElement("a");
+      link.className = "devlixe-mega__item";
+      link.href = item.href;
+
+      var icon = document.createElement("span");
+      icon.className = "devlixe-mega__icon";
+      icon.setAttribute("aria-hidden", "true");
+      icon.style.setProperty("--menu-icon-color", item.color || "#2563eb");
+      icon.innerHTML = getHeaderMegaIcon(item.icon);
+
+      var copy = document.createElement("span");
+      copy.className = "devlixe-mega__item-copy";
+      var title = document.createElement("strong");
+      title.textContent = item.title;
+      var description = document.createElement("span");
+      description.textContent = item.description;
+      copy.appendChild(title);
+      copy.appendChild(description);
+      link.appendChild(icon);
+      link.appendChild(copy);
+      return link;
+    }
+
+    function createHero(hero) {
+      var link = document.createElement("a");
+      link.className = "devlixe-mega__hero";
+      link.href = hero.href;
+
+      var copy = document.createElement("span");
+      var heading = document.createElement("span");
+      heading.className = "devlixe-mega__hero-heading";
+      var title = document.createElement("strong");
+      title.textContent = hero.title;
+      heading.appendChild(title);
+      if (hero.badge) {
+        var badge = document.createElement("em");
+        badge.textContent = hero.badge;
+        heading.appendChild(badge);
+      }
+      var description = document.createElement("span");
+      description.className = "devlixe-mega__hero-description";
+      description.textContent = hero.description;
+      copy.appendChild(heading);
+      copy.appendChild(description);
+
+      var arrow = document.createElement("span");
+      arrow.className = "devlixe-mega__arrow";
+      arrow.setAttribute("aria-hidden", "true");
+      arrow.textContent = "\u2192";
+      link.appendChild(copy);
+      link.appendChild(arrow);
+      return link;
+    }
+
+    function createFeaturedCard() {
+      var card = document.createElement("a");
+      card.className = "devlixe-mega__featured";
+      card.href = "case-studies.html";
+
+      var label = document.createElement("span");
+      label.className = "devlixe-mega__featured-label";
+      label.textContent = "AI Automation";
+      card.appendChild(label);
+
+      var sourceImage = Array.from(document.images).find(function (image) {
+        return (image.alt || "").toLowerCase().indexOf("vendorx") !== -1;
+      });
+      if (sourceImage) {
+        var image = document.createElement("img");
+        image.src = sourceImage.currentSrc || sourceImage.src;
+        image.alt = "VendorX AI automation case study";
+        image.loading = "lazy";
+        card.appendChild(image);
+      }
+
+      var title = document.createElement("strong");
+      title.textContent = "How VendorX cut onboarding time 47% with AI workflows";
+      var view = document.createElement("span");
+      view.className = "devlixe-mega__featured-view";
+      view.textContent = "View case study  \u2192";
+      card.appendChild(title);
+      card.appendChild(view);
+      return card;
+    }
+
+    function renderCategory(panelRecord, menu, categoryIndex) {
+      var category = menu.categories[categoryIndex];
+      panelRecord.categoryButtons.forEach(function (button, index) {
+        var selected = index === categoryIndex;
+        button.classList.toggle("is-active", selected);
+        button.setAttribute("aria-selected", selected ? "true" : "false");
+        button.tabIndex = selected ? 0 : -1;
+      });
+
+      if (
+        panelRecord.activeCategory === categoryIndex &&
+        panelRecord.content.childElementCount
+      ) {
+        return;
+      }
+
+      panelRecord.activeCategory = categoryIndex;
+      panelRecord.content.replaceChildren();
+      if (category.hero) panelRecord.content.appendChild(createHero(category.hero));
+      var items = document.createElement("div");
+      items.className = "devlixe-mega__items";
+      category.items.forEach(function (item) {
+        items.appendChild(createItemLink(item));
+      });
+      panelRecord.content.appendChild(items);
+      panelRecord.content.classList.remove("is-refreshing");
+      void panelRecord.content.offsetWidth;
+      panelRecord.content.classList.add("is-refreshing");
+    }
+
+    function createPanel(name, menu) {
+      var panel = document.createElement("section");
+      panel.className = "devlixe-mega__panel" + (menu.featured ? "" : " devlixe-mega__panel--wide");
+      panel.id = "devlixe-mega-" + name.toLowerCase();
+      panel.setAttribute("aria-label", name + " menu");
+      panel.hidden = true;
+
+      var inner = document.createElement("div");
+      inner.className = "devlixe-mega__inner";
+      var categories = document.createElement("div");
+      categories.className = "devlixe-mega__categories";
+      categories.setAttribute("role", "tablist");
+      categories.setAttribute("aria-label", name + " categories");
+      var content = document.createElement("div");
+      content.className = "devlixe-mega__content";
+      var categoryButtons = [];
+
+      menu.categories.forEach(function (category, index) {
+        var button = document.createElement("button");
+        button.type = "button";
+        button.className = "devlixe-mega__category";
+        button.setAttribute("role", "tab");
+        button.innerHTML = "<span></span><span aria-hidden='true'>\u203a</span>";
+        button.firstElementChild.textContent = category.label;
+        button.addEventListener("mouseenter", function () {
+          renderCategory(panelMap[name], menu, index);
+        });
+        button.addEventListener("focus", function () {
+          renderCategory(panelMap[name], menu, index);
+        });
+        button.addEventListener("click", function () {
+          renderCategory(panelMap[name], menu, index);
+        });
+        categoryButtons.push(button);
+        categories.appendChild(button);
+      });
+
+      inner.appendChild(categories);
+      inner.appendChild(content);
+      if (menu.featured) inner.appendChild(createFeaturedCard());
+      panel.appendChild(inner);
+      shell.appendChild(panel);
+
+      panelMap[name] = {
+        panel: panel,
+        content: content,
+        categoryButtons: categoryButtons,
+        activeCategory: -1,
+        hideTimer: 0,
+        shouldOpen: false,
+      };
+      renderCategory(panelMap[name], menu, 0);
+    }
+
+    function setPanelOpen(panelRecord, shouldOpen) {
+      panelRecord.shouldOpen = shouldOpen;
+      window.clearTimeout(panelRecord.hideTimer);
+
+      if (shouldOpen) {
+        var wasHidden = panelRecord.panel.hidden;
+        panelRecord.panel.hidden = false;
+        if (wasHidden) {
+          panelRecord.panel.classList.remove("is-open");
+          void panelRecord.panel.offsetWidth;
+        }
+        window.requestAnimationFrame(function () {
+          if (panelRecord.shouldOpen) {
+            panelRecord.panel.classList.add("is-open");
+          }
+        });
+        return;
+      }
+
+      panelRecord.panel.classList.remove("is-open");
+      panelRecord.hideTimer = window.setTimeout(function () {
+        if (!panelRecord.shouldOpen) panelRecord.panel.hidden = true;
+      }, reducedMotion ? 0 : 170);
+    }
+
+    function closeMenus(restoreFocus) {
+      var focusName = activeName;
+      menuNames.forEach(function (name) {
+        setPanelOpen(panelMap[name], false);
+      });
+      buttons.forEach(function (button) {
+        button.classList.remove("is-active");
+        button.setAttribute("aria-expanded", "false");
+      });
+      activeName = "";
+      if (restoreFocus && focusName) {
+        var activeButton = buttons.find(function (button) {
+          return button.textContent.trim() === focusName;
+        });
+        if (activeButton) {
+          suppressFocusOpen = true;
+          activeButton.focus({ preventScroll: true });
+          suppressFocusOpen = false;
+        }
+      }
+    }
+
+    function openMenu(name) {
+      activeName = name;
+      menuNames.forEach(function (menuName) {
+        setPanelOpen(panelMap[menuName], menuName === name);
+      });
+      buttons.forEach(function (button) {
+        var selected = button.textContent.trim() === name;
+        button.classList.toggle("is-active", selected);
+        button.setAttribute("aria-expanded", selected ? "true" : "false");
+      });
+    }
+
+    menuNames.forEach(function (name) {
+      createPanel(name, menuData[name]);
+    });
+
+    buttons.forEach(function (button) {
+      var name = button.textContent.trim();
+      button.setAttribute("aria-haspopup", "true");
+      button.setAttribute("aria-controls", panelMap[name].panel.id);
+      button.setAttribute("aria-expanded", "false");
+      button.addEventListener("mouseenter", function () { openMenu(name); });
+      button.addEventListener("focus", function () {
+        if (!suppressFocusOpen) openMenu(name);
+      });
+      button.addEventListener("click", function (event) {
+        event.preventDefault();
+        openMenu(name);
+      });
+    });
+
+    header.addEventListener("mouseleave", function () {
+      closeMenus(false);
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && activeName) {
+        event.preventDefault();
+        closeMenus(true);
+      }
+    });
+    document.addEventListener("pointerdown", function (event) {
+      if (!header.contains(event.target)) closeMenus(false);
+    });
+  }
+
   function initConceptGraph() {
     var section = document.querySelector(".concept-section");
     var canvas = section && section.querySelector("canvas");
@@ -1146,6 +1545,7 @@
 
   function init() {
     document.documentElement.classList.add("devlixe-enhancements-ready");
+    initHeaderMegaMenus();
     initConceptGraph();
     initTrustedLogoMarquee();
     initHeroCarousel();
