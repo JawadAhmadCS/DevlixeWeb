@@ -562,6 +562,167 @@
     });
   }
 
+  function shortenText(text, maximumLength) {
+    var normalized = String(text || "")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (normalized.length <= maximumLength) return normalized;
+
+    var shortened = normalized.slice(0, maximumLength);
+    var lastSpace = shortened.lastIndexOf(" ");
+    return shortened.slice(0, Math.max(lastSpace, maximumLength - 24)) + "…";
+  }
+
+  function getCompanyName(text) {
+    var normalized = String(text || "").trim();
+    var simplePhraseMatch = normalized.match(
+      /^([A-Za-z0-9.-]+)\s+(?:wasn[’']t|always)/i,
+    );
+    if (simplePhraseMatch) return simplePhraseMatch[1].trim();
+
+    var commaMatch = normalized.match(/^([^,]+),/);
+    if (commaMatch) return commaMatch[1].trim();
+
+    var phraseMatch = normalized.match(
+      /^(.+?)\s+(?:had|needed|turned)/i,
+    );
+    return phraseMatch ? phraseMatch[1].trim() : "Devlixe Client";
+  }
+
+  function createTestimonialCard(story, duplicate) {
+    var card = document.createElement("article");
+    var quote = document.createElement("p");
+    var footer = document.createElement("div");
+    var avatar = document.createElement("span");
+    var details = document.createElement("div");
+    var company = document.createElement("p");
+    var role = document.createElement("p");
+    var stars = document.createElement("div");
+    var initials = story.company
+      .split(/\s+/)
+      .slice(0, 2)
+      .map(function (word) {
+        return word.charAt(0);
+      })
+      .join("")
+      .toUpperCase();
+
+    card.className = "devlixe-testimonial-card";
+    card.setAttribute("role", "listitem");
+    if (duplicate) card.setAttribute("aria-hidden", "true");
+
+    quote.className = "devlixe-testimonial-card__quote";
+    quote.textContent = "“" + story.quote + "”";
+    footer.className = "devlixe-testimonial-card__footer";
+    avatar.className = "devlixe-testimonial-card__avatar";
+    avatar.style.setProperty("--testimonial-avatar", story.color);
+    avatar.textContent = initials || "D";
+    details.className = "devlixe-testimonial-card__details";
+    company.className = "devlixe-testimonial-card__company";
+    company.textContent = story.company;
+    role.className = "devlixe-testimonial-card__role";
+    role.textContent = story.role;
+    stars.className = "devlixe-testimonial-card__stars";
+    stars.setAttribute("aria-label", "5 out of 5 stars");
+    stars.textContent = "★★★★★";
+
+    details.append(company, role, stars);
+    footer.append(avatar, details);
+    card.append(quote, footer);
+    return card;
+  }
+
+  function initTestimonials() {
+    var section = document.querySelector(".testimonial-section");
+    var wrapper = section && section.querySelector(".cardsWrapper");
+    var portfolioSlides = Array.from(
+      document.querySelectorAll(".PortfolioSlider .swiper-slide"),
+    );
+    if (
+      !section ||
+      !wrapper ||
+      wrapper.children.length ||
+      !portfolioSlides.length ||
+      section.dataset.enhanced === "true"
+    ) {
+      return;
+    }
+
+    var colors = ["#ee7a42", "#2d8e91", "#5867a8", "#aa5e83"];
+    var stories = portfolioSlides
+      .map(function (slide, index) {
+        var label = Array.from(slide.querySelectorAll("div")).find(
+          function (item) {
+            return item.textContent.trim() === "USE CASE";
+          },
+        );
+        var titleElement = label && label.nextElementSibling;
+        var contentParagraphs = Array.from(slide.querySelectorAll("p")).filter(
+          function (item) {
+            return item.textContent.trim().length > 20;
+          },
+        );
+        var quoteParagraph = contentParagraphs[0];
+        var paragraphText = quoteParagraph
+          ? quoteParagraph.textContent.trim()
+          : "";
+        var quoteText = paragraphText;
+
+        if (!quoteText) return null;
+        return {
+          company: getCompanyName(paragraphText),
+          role: titleElement
+            ? titleElement.textContent.trim()
+            : "AI Transformation",
+          quote: shortenText(quoteText, 235),
+          color: colors[index % colors.length],
+        };
+      })
+      .filter(Boolean);
+
+    if (!stories.length) return;
+
+    function createRow(items, reverse) {
+      var row = document.createElement("div");
+      var track = document.createElement("div");
+      row.className =
+        "devlixe-testimonial-row" +
+        (reverse ? " devlixe-testimonial-row--reverse" : "");
+      row.setAttribute("role", "list");
+      track.className = "devlixe-testimonial-track";
+
+      [false, true].forEach(function (duplicate) {
+        var sequence = document.createElement("div");
+        sequence.className = "devlixe-testimonial-sequence";
+        items.forEach(function (story) {
+          sequence.appendChild(createTestimonialCard(story, duplicate));
+        });
+        track.appendChild(sequence);
+      });
+
+      row.appendChild(track);
+      return row;
+    }
+
+    section.dataset.enhanced = "true";
+    wrapper.appendChild(createRow(stories, false));
+    wrapper.appendChild(createRow(stories.slice().reverse(), true));
+  }
+
+  function initContactSection() {
+    var heading = Array.from(document.querySelectorAll("h1")).find(
+      function (item) {
+        return item.textContent.indexOf("Been Thinking About It") !== -1;
+      },
+    );
+    var panel = heading && heading.closest(".overflow-hidden");
+    var section = panel && panel.closest(".min-h-screen");
+    if (!panel || !section) return;
+
+    section.classList.add("devlixe-contact-section");
+    panel.classList.add("devlixe-contact-panel");
+  }
+
   function createSliderControls(root, previous, next, getStatus) {
     var controls = document.createElement("div");
     var previousButton = document.createElement("button");
@@ -719,6 +880,155 @@
     show(0, true);
   }
 
+  function initVideoSlider(root, section) {
+    if (!root || !section || root.dataset.enhanced === "true") return;
+
+    var wrapper = root.querySelector(".swiper-wrapper");
+    var slides = wrapper ? directChildren(wrapper, ".swiper-slide") : [];
+    var previousButton = section.querySelector(".custom-swiper-prev");
+    var nextButton = section.querySelector(".custom-swiper-next");
+    var pagination = section.querySelector(".custom-swiper-pagination");
+    if (!wrapper || slides.length < 2) return;
+
+    root.dataset.enhanced = "true";
+    root.classList.add("devlixe-video-slider");
+    section.classList.add("devlixe-video-section");
+    root.setAttribute("role", "region");
+    root.setAttribute("aria-label", "Videos");
+    root.setAttribute("tabindex", "0");
+
+    var activeIndex = 0;
+    var pointerStartX = null;
+    var resizeFrame = null;
+    var dots = [];
+
+    function positionSlider(instant) {
+      var activeSlide = slides[activeIndex];
+      if (!activeSlide) return;
+
+      if (instant) wrapper.style.transition = "none";
+      var rootRect = root.getBoundingClientRect();
+      var slideRect = activeSlide.getBoundingClientRect();
+      var transform = window.getComputedStyle(wrapper).transform;
+      var currentTransform =
+        transform === "none" ? 0 : new DOMMatrix(transform).m41;
+      var slideCenter =
+        slideRect.left - rootRect.left - currentTransform + slideRect.width / 2;
+      var target = rootRect.width / 2 - slideCenter;
+      wrapper.style.transform = "translate3d(" + target + "px, 0, 0)";
+
+      if (instant) {
+        window.requestAnimationFrame(function () {
+          wrapper.style.transition = "";
+        });
+      }
+    }
+
+    function updateControls() {
+      var atStart = activeIndex === 0;
+      var atEnd = activeIndex === slides.length - 1;
+      if (previousButton) {
+        previousButton.classList.toggle("is-disabled", atStart);
+        previousButton.setAttribute("aria-disabled", atStart ? "true" : "false");
+      }
+      if (nextButton) {
+        nextButton.classList.toggle("is-disabled", atEnd);
+        nextButton.setAttribute("aria-disabled", atEnd ? "true" : "false");
+      }
+      dots.forEach(function (dot, index) {
+        var isActive = index === activeIndex;
+        dot.classList.toggle("is-active", isActive);
+        dot.setAttribute("aria-current", isActive ? "true" : "false");
+      });
+    }
+
+    function show(index, instant) {
+      activeIndex = Math.max(0, Math.min(index, slides.length - 1));
+      slides.forEach(function (slide, slideIndex) {
+        var isActive = slideIndex === activeIndex;
+        slide.classList.toggle("is-active", isActive);
+        slide.setAttribute("aria-hidden", isActive ? "false" : "true");
+      });
+      updateControls();
+      positionSlider(Boolean(instant));
+    }
+
+    function previous() {
+      if (activeIndex > 0) show(activeIndex - 1);
+    }
+
+    function next() {
+      if (activeIndex < slides.length - 1) show(activeIndex + 1);
+    }
+
+    function prepareControl(control, label, action) {
+      if (!control) return;
+      control.setAttribute("role", "button");
+      control.setAttribute("tabindex", "0");
+      control.setAttribute("aria-label", label);
+      control.addEventListener("click", action);
+      control.addEventListener("keydown", function (event) {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        action();
+      });
+    }
+
+    prepareControl(previousButton, "Previous video", previous);
+    prepareControl(nextButton, "Next video", next);
+
+    if (pagination) {
+      pagination.replaceChildren();
+      slides.forEach(function (_, index) {
+        var dot = document.createElement("button");
+        dot.type = "button";
+        dot.className = "devlixe-video-dot";
+        dot.setAttribute("aria-label", "Show video " + (index + 1));
+        dot.addEventListener("click", function () {
+          show(index);
+        });
+        pagination.appendChild(dot);
+        dots.push(dot);
+      });
+    }
+
+    root.addEventListener("keydown", function (event) {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        previous();
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault();
+        next();
+      }
+    });
+
+    root.addEventListener("pointerdown", function (event) {
+      pointerStartX = event.clientX;
+    });
+    root.addEventListener("pointerup", function (event) {
+      if (pointerStartX === null) return;
+      var distance = event.clientX - pointerStartX;
+      pointerStartX = null;
+      if (Math.abs(distance) < 50) return;
+      if (distance > 0) previous();
+      else next();
+    });
+    root.addEventListener("pointercancel", function () {
+      pointerStartX = null;
+    });
+
+    function handleResize() {
+      if (resizeFrame) window.cancelAnimationFrame(resizeFrame);
+      resizeFrame = window.requestAnimationFrame(function () {
+        positionSlider(true);
+        resizeFrame = null;
+      });
+    }
+
+    window.addEventListener("resize", handleResize, { passive: true });
+    show(0, true);
+  }
+
   function initSimpleSlider(root, autoplay) {
     if (!root || root.dataset.enhanced === "true") return;
 
@@ -778,11 +1088,20 @@
 
   function initSliders() {
     var portfolioSlider = document.querySelector(".PortfolioSlider .swiper");
+    var videoHeading = Array.from(document.querySelectorAll(".chip p")).find(
+      function (item) {
+        return item.textContent.trim() === "VIDEOS";
+      },
+    );
+    var videoSection = videoHeading && videoHeading.closest(".bg-gray-100");
+    var videoSlider = videoSection && videoSection.querySelector(".swiper");
+
     initPortfolioSlider(portfolioSlider);
+    initVideoSlider(videoSlider, videoSection);
 
     var sliders = Array.from(document.querySelectorAll(".swiper"));
     sliders.forEach(function (slider, index) {
-      if (slider !== portfolioSlider) {
+      if (slider !== portfolioSlider && slider !== videoSlider) {
         initSimpleSlider(slider, index === 0 ? 9000 : 0);
       }
     });
@@ -833,7 +1152,9 @@
     initIndustryTabs();
     initServiceTabs();
     initProcessSection();
+    initTestimonials();
     initSliders();
+    initContactSection();
     initFileUploads();
   }
 
