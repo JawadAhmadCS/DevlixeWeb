@@ -256,6 +256,9 @@
 
       slides.forEach(function (slide, slideIndex) {
         var active = slideIndex === activeIndex;
+        var content = slide.querySelector(".imageActive, .imageInactive");
+        var visual = slide.querySelector(".image1Active, .image1Inactive");
+
         slide.style.position = active ? "relative" : "absolute";
         slide.style.inset = active ? "auto" : "0";
         slide.style.width = "100%";
@@ -266,14 +269,44 @@
         slide.style.transition =
           "opacity 650ms ease, transform 650ms ease";
         slide.setAttribute("aria-hidden", active ? "false" : "true");
+
+        if (content) {
+          content.classList.toggle("imageActive", active);
+          content.classList.toggle("imageInactive", !active);
+        }
+
+        if (visual) {
+          visual.classList.toggle("image1Active", active);
+          visual.classList.toggle("image1Inactive", !active);
+        }
       });
 
       tabs.forEach(function (tab, tabIndex) {
+        var active = tabIndex === activeIndex;
+        var indicator = tab.firstElementChild;
+        var heading = tab.querySelector("h5");
+        var description = tab.querySelector("p");
+
         tab.classList.add("devlixe-hero-tab");
-        tab.setAttribute(
-          "aria-selected",
-          tabIndex === activeIndex ? "true" : "false",
-        );
+        tab.setAttribute("aria-selected", active ? "true" : "false");
+
+        if (indicator) {
+          indicator.style.backgroundColor = active
+            ? "rgba(255, 255, 255, 0.82)"
+            : "transparent";
+        }
+
+        if (heading) {
+          heading.style.color = active
+            ? "rgb(255, 255, 255)"
+            : "rgba(255, 255, 255, 0.5)";
+        }
+
+        if (description) {
+          description.style.color = active
+            ? "rgb(255, 255, 255)"
+            : "rgba(255, 255, 255, 0.5)";
+        }
       });
     }
 

@@ -77,6 +77,16 @@
   box-shadow: inset 0 -3px 0 #3ccfc0;
 }
 
+.imageActive > h1,
+.imageInactive > h1 {
+  color: #fff;
+}
+
+.imageActive > h1 strong,
+.imageInactive > h1 strong {
+  color: #3ccfc0;
+}
+
 .devlixe-static-tab {
   outline: none;
 }
