@@ -133,6 +133,17 @@
     var nav = header && header.querySelector("nav");
     if (!header || !nav || header.dataset.megaEnhanced === "true") return;
 
+    var enhancementScript = Array.from(document.scripts).find(function (script) {
+      return /(?:^|\/)static-enhancements\.js(?:\?|$)/.test(script.src);
+    });
+    var siteBaseUrl = enhancementScript
+      ? new URL(".", enhancementScript.src)
+      : new URL(".", window.location.href);
+
+    function resolveSiteHref(href) {
+      return new URL(href, siteBaseUrl).href;
+    }
+
     var menuData = getHeaderMegaMenuData();
     var menuNames = Object.keys(menuData);
     var buttons = Array.from(nav.querySelectorAll("button")).filter(function (button) {
@@ -151,7 +162,7 @@
     function createItemLink(item) {
       var link = document.createElement("a");
       link.className = "devlixe-mega__item";
-      link.href = item.href;
+      link.href = resolveSiteHref(item.href);
 
       var icon = document.createElement("span");
       icon.className = "devlixe-mega__icon";
@@ -175,7 +186,7 @@
     function createHero(hero) {
       var link = document.createElement("a");
       link.className = "devlixe-mega__hero";
-      link.href = hero.href;
+      link.href = resolveSiteHref(hero.href);
 
       var copy = document.createElement("span");
       var heading = document.createElement("span");
@@ -206,7 +217,7 @@
     function createFeaturedCard() {
       var card = document.createElement("a");
       card.className = "devlixe-mega__featured";
-      card.href = "case-studies.html";
+      card.href = resolveSiteHref("case-studies.html");
 
       var label = document.createElement("span");
       label.className = "devlixe-mega__featured-label";
