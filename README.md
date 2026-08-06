@@ -10,16 +10,21 @@ Static Devlixe website. The deployable site lives directly in the repository roo
 - `_next/`: exported Next.js runtime assets
 - `img/`, `svg/`, and `fonts/`: site assets
 - `cdn.sanity.io/`: locally mirrored Sanity media
-- `www.devlixe.com/index.html`: compatibility redirect for old local bookmarks
 
 ## Run locally
 
-Python 3 ke saath project directory mein yeh command run karein:
+Node.js 18 ya newer install hona chahiye. Project directory mein yeh command run karein:
 
 ```powershell
-python -m http.server 8000
+npm start
 ```
 
 Phir browser mein [http://localhost:8000](http://localhost:8000) open karein.
 
 Server band karne ke liye terminal mein `Ctrl+C` press karein.
+
+Development mode mein automatic server restart ke liye:
+
+```powershell
+npm run dev
+```
