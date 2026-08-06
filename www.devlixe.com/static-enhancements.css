@@ -1859,3 +1859,69 @@ body .devlixe-testimonial-card__role {
     padding: 21px;
   }
 }
+
+/*
+ * Accessible surface contrast
+ *
+ * Several exported pages contain nested heading/paragraph markup. Browsers
+ * repair that markup by moving the inner element outside its colour wrapper,
+ * so black text can end up on the navy service sections. The companion script
+ * only applies these classes when the rendered contrast is actually too low.
+ */
+:root {
+  --devlixe-ink: #102238;
+  --devlixe-copy: #526276;
+  --devlixe-on-dark: #ffffff;
+  --devlixe-on-dark-muted: #d5e0e8;
+  --devlixe-accent: #35d0c1;
+}
+
+html .devlixe-contrast-heading-on-dark {
+  color: var(--devlixe-on-dark) !important;
+}
+
+html .devlixe-contrast-copy-on-dark {
+  color: var(--devlixe-on-dark-muted) !important;
+}
+
+html .devlixe-contrast-heading-on-light {
+  color: var(--devlixe-ink) !important;
+}
+
+html .devlixe-contrast-copy-on-light {
+  color: var(--devlixe-copy) !important;
+}
+
+html .bg-darkBlue .grid > * {
+  min-width: 0;
+}
+
+html .devlixe-contrast-copy-on-dark,
+html .devlixe-contrast-copy-on-light {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+html .devlixe-contrast-heading-on-dark .text-lightGreen,
+html .devlixe-contrast-heading-on-dark strong.text-lightGreen {
+  color: var(--devlixe-accent) !important;
+}
+
+html .bg-darkBlue .primary-cta {
+  border: 2px solid rgba(255, 255, 255, 0.88);
+  color: #fff;
+  background: linear-gradient(100deg, #18ad9e 0%, #176cc0 100%);
+  box-shadow: 0 12px 28px rgba(0, 10, 28, 0.24);
+}
+
+html .bg-darkBlue .primary-cta:hover {
+  border-color: #fff;
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+html .bg-darkBlue a:focus-visible,
+html .bg-darkBlue button:focus-visible {
+  outline: 3px solid var(--devlixe-accent);
+  outline-offset: 4px;
+}

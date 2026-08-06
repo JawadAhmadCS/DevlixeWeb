@@ -5,6 +5,16 @@
     "(prefers-reduced-motion: reduce)",
   ).matches;
 
+  function ensureFreshEnhancementStyles() {
+    document.querySelectorAll('link[rel="stylesheet"]').forEach(function (link) {
+      if (!/(?:^|\/)static-enhancements\.css(?:\?|$)/.test(link.href)) return;
+      var stylesheetUrl = new URL(link.href, window.location.href);
+      if (stylesheetUrl.searchParams.get("v") === "20260807-contrast1") return;
+      stylesheetUrl.searchParams.set("v", "20260807-contrast1");
+      link.href = stylesheetUrl.href;
+    });
+  }
+
   function directChildren(element, selector) {
     return Array.from(element.children).filter(function (child) {
       return child.matches(selector);
@@ -1225,6 +1235,116 @@
     wrapper.appendChild(createRow(stories.slice().reverse(), true));
   }
 
+  function parseCssColor(value) {
+    var match = String(value || "").match(
+      /rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:\s*[,/]\s*([\d.]+))?\s*\)/i,
+    );
+    if (!match) return null;
+
+    return {
+      red: Number(match[1]),
+      green: Number(match[2]),
+      blue: Number(match[3]),
+      alpha: match[4] === undefined ? 1 : Number(match[4]),
+    };
+  }
+
+  function compositeColor(foreground, background) {
+    var alpha = foreground.alpha;
+    return {
+      red: foreground.red * alpha + background.red * (1 - alpha),
+      green: foreground.green * alpha + background.green * (1 - alpha),
+      blue: foreground.blue * alpha + background.blue * (1 - alpha),
+      alpha: 1,
+    };
+  }
+
+  function colorLuminance(color) {
+    var channels = [color.red, color.green, color.blue].map(function (value) {
+      var channel = value / 255;
+      return channel <= 0.04045
+        ? channel / 12.92
+        : Math.pow((channel + 0.055) / 1.055, 2.4);
+    });
+    return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
+  }
+
+  function contrastRatio(first, second) {
+    var firstLuminance = colorLuminance(first);
+    var secondLuminance = colorLuminance(second);
+    var lighter = Math.max(firstLuminance, secondLuminance);
+    var darker = Math.min(firstLuminance, secondLuminance);
+    return (lighter + 0.05) / (darker + 0.05);
+  }
+
+  function effectiveBackground(element) {
+    var current = element;
+    var pageWhite = { red: 255, green: 255, blue: 255, alpha: 1 };
+
+    while (current && current.nodeType === 1) {
+      var style = window.getComputedStyle(current);
+      var color = parseCssColor(style.backgroundColor);
+
+      if (color && color.alpha >= 0.84) return compositeColor(color, pageWhite);
+
+      if (current.classList.contains("bg-darkBlue")) {
+        return { red: 23, green: 38, blue: 58, alpha: 1 };
+      }
+
+      if (current.classList.contains("testimonial-section")) {
+        return { red: 16, green: 34, blue: 56, alpha: 1 };
+      }
+
+      current = current.parentElement;
+    }
+
+    return pageWhite;
+  }
+
+  function initContrastSystem() {
+    var classNames = [
+      "devlixe-contrast-heading-on-dark",
+      "devlixe-contrast-copy-on-dark",
+      "devlixe-contrast-heading-on-light",
+      "devlixe-contrast-copy-on-light",
+    ];
+    var candidates = document.querySelectorAll(
+      "main h1, main h2, main h3, main h4, main h5, main h6, main p, main li",
+    );
+    var corrected = 0;
+
+    candidates.forEach(function (element) {
+      classNames.forEach(function (className) {
+        element.classList.remove(className);
+      });
+
+      if (!element.textContent.trim()) return;
+      if (element.closest("a, button, input, textarea, select, option")) return;
+
+      var style = window.getComputedStyle(element);
+      if (style.display === "none" || style.visibility === "hidden") return;
+
+      var background = effectiveBackground(element);
+      var foreground = parseCssColor(style.color);
+      if (!foreground) return;
+
+      foreground = compositeColor(foreground, background);
+      if (contrastRatio(foreground, background) >= 4.5) return;
+
+      var heading = /^H[1-6]$/.test(element.tagName);
+      var darkSurface = colorLuminance(background) < 0.35;
+      element.classList.add(
+        "devlixe-contrast-" +
+          (heading ? "heading" : "copy") +
+          "-on-" +
+          (darkSurface ? "dark" : "light"),
+      );
+      corrected += 1;
+    });
+
+    document.documentElement.dataset.contrastCorrections = String(corrected);
+  }
+
   function initContactSection() {
     var heading = Array.from(document.querySelectorAll("h1")).find(
       function (item) {
@@ -1799,6 +1919,7 @@
 
   function init() {
     document.documentElement.classList.add("devlixe-enhancements-ready");
+    ensureFreshEnhancementStyles();
     initContactSection();
     initBookingLinks();
     if (window.location.hash) {
@@ -1817,6 +1938,7 @@
       window.setTimeout(scrollToEarlyHash, 700);
     }
     initHeaderMegaMenus();
+    initContrastSystem();
     initConceptGraph();
     initTrustedLogoMarquee();
     initHeroCarousel();
@@ -1827,6 +1949,9 @@
     initTestimonials();
     initSliders();
     initFileUploads();
+
+    window.requestAnimationFrame(initContrastSystem);
+    window.addEventListener("load", initContrastSystem, { once: true });
 
     if (window.location.hash) {
       window.requestAnimationFrame(function () {
