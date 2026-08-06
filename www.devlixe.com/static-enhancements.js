@@ -9,8 +9,8 @@
     document.querySelectorAll('link[rel="stylesheet"]').forEach(function (link) {
       if (!/(?:^|\/)static-enhancements\.css(?:\?|$)/.test(link.href)) return;
       var stylesheetUrl = new URL(link.href, window.location.href);
-      if (stylesheetUrl.searchParams.get("v") === "20260807-contrast1") return;
-      stylesheetUrl.searchParams.set("v", "20260807-contrast1");
+      if (stylesheetUrl.searchParams.get("v") === "20260807-journey2") return;
+      stylesheetUrl.searchParams.set("v", "20260807-journey2");
       link.href = stylesheetUrl.href;
     });
   }
@@ -938,152 +938,172 @@
   }
 
   function initProcessSection() {
-    var section = Array.from(document.querySelectorAll("section")).find(
+    var sections = Array.from(document.querySelectorAll("section")).filter(
       function (item) {
         var chip = item.querySelector(".chip");
-        return chip && chip.textContent.trim() === "Our Process";
-      },
-    );
-    if (!section || section.dataset.processEnhanced === "true") return;
-
-    var title = Array.from(section.querySelectorAll("h1, h2")).find(function (
-      item,
-    ) {
-      return item.textContent.includes("How We Bring Your");
-    });
-    var description = Array.from(section.querySelectorAll("p")).find(function (
-      item,
-    ) {
-      return item.textContent
-        .trim()
-        .startsWith("We believe in transparent");
-    });
-    var stepsContainer = Array.from(section.querySelectorAll("div")).find(
-      function (item) {
-        var children = directChildren(item, "div");
         return (
-          item.classList.contains("max-w-[970px]") &&
-          children.length === 6 &&
-          children.every(function (child) {
-            return child.querySelector("h3");
-          })
+          chip &&
+          chip.textContent.trim().toLowerCase() === "our process" &&
+          item.querySelector('img[alt="progress"]')
         );
       },
     );
-    var steps = stepsContainer
-      ? directChildren(stepsContainer, "div")
-      : [];
 
-    if (!title || !description || steps.length !== 6) return;
+    sections.forEach(function (section) {
+      if (section.dataset.processEnhanced === "true") return;
 
-    var compactGrid = document.createElement("div");
-    var compactTitles = [
-      "Get a Ballpark",
-      "Product Strategy & Engineering Discovery",
-      "Custom Product Development",
-      "Initial Product Launch",
-      "Go-to-Market",
-      "Continuous Optimization & Updates",
-    ];
-
-    section.dataset.processEnhanced = "true";
-    if (!section.id) section.id = "our-process";
-    section.classList.add("devlixe-process");
-    section.querySelector(".chip").classList.add("devlixe-process__chip");
-    title.classList.add("devlixe-process__title");
-    description.classList.add("devlixe-process__description");
-    title.innerHTML = 'From Idea to Impact in <strong>6 Focused Steps</strong>';
-    description.textContent =
-      "A clear product journey from early scope and strategy through launch, growth, and continuous improvement.";
-    stepsContainer.classList.add("devlixe-process-original");
-    compactGrid.className = "devlixe-process-grid";
-
-    steps.forEach(function (step, stepIndex) {
-      var connector = directChildren(step, "div").find(function (item) {
-        return item.querySelector('img[alt="progress"]');
+      var steps = [];
+      section.querySelectorAll('img[alt="progress"]').forEach(function (image) {
+        var connector = image.parentElement;
+        var step = connector && connector.parentElement;
+        if (!step || !step.querySelector("h3") || steps.includes(step)) return;
+        steps.push(step);
       });
-      var row = directChildren(step, "div").find(function (item) {
-        return (
-          item.classList.contains("flex") &&
-          item.classList.contains("items-center")
-        );
+      if (!steps.length) return;
+
+      section.dataset.processEnhanced = "true";
+      if (!section.id) section.id = "our-process";
+      section.classList.add("devlixe-journey", "devlixe-journey-ready");
+
+      steps.forEach(function (step) {
+        var connector = directChildren(step, "div").find(function (item) {
+          return item.querySelector('img[alt="progress"]');
+        });
+        var row = directChildren(step, "div").find(function (item) {
+          return (
+            item.classList.contains("flex") &&
+            item.classList.contains("items-center")
+          );
+        });
+        var textColumn = row && row.firstElementChild;
+        var imageColumn = row && row.lastElementChild;
+        var revealItems = textColumn
+          ? Array.from(textColumn.children).filter(function (item) {
+              return item.textContent.trim().length > 0;
+            })
+          : [];
+
+        step.classList.add("devlixe-process-step");
+        if (connector) {
+          var connectorImage = connector.querySelector('img[alt="progress"]');
+          var connectorSource = connectorImage
+            ? connectorImage.getAttribute("src") || ""
+            : "";
+          connector.classList.add("devlixe-process-connector");
+          connector.classList.add(
+            connectorSource.indexOf("process-h.svg") !== -1
+              ? "is-horizontal"
+              : "is-vertical",
+          );
+        }
+
+        if (imageColumn && imageColumn !== textColumn) {
+          revealItems.push(imageColumn);
+        }
+
+        revealItems.forEach(function (item, index) {
+          item.classList.add("devlixe-process-reveal");
+          item.style.setProperty(
+            "--process-reveal-delay",
+            160 + index * 130 + "ms",
+          );
+        });
       });
-      var textColumn = row && row.firstElementChild;
-      var imageColumn = row && row.lastElementChild;
-      var revealItems = textColumn
-        ? Array.from(textColumn.children).filter(function (item) {
-            return item.textContent.trim().length > 0;
-          })
-        : [];
 
-      step.classList.add("devlixe-process-step");
-      if (connector) connector.classList.add("devlixe-process-connector");
+      var title = Array.from(section.querySelectorAll("h1, h2")).find(function (
+        item,
+      ) {
+        return item.textContent.includes("How We Bring Your");
+      });
+      var description = Array.from(section.querySelectorAll("p")).find(function (
+        item,
+      ) {
+        return item.textContent.trim().startsWith("We believe in transparent");
+      });
+      var stepsContainer = steps[0].parentElement;
+      var compactCards = [];
 
-      if (imageColumn && imageColumn !== textColumn) {
-        revealItems.push(imageColumn);
+      if (title && description && steps.length === 6 && stepsContainer) {
+        var compactGrid = document.createElement("div");
+        var compactTitles = [
+          "Get a Ballpark",
+          "Product Strategy & Engineering Discovery",
+          "Custom Product Development",
+          "Initial Product Launch",
+          "Go-to-Market",
+          "Continuous Optimization & Updates",
+        ];
+
+        section.classList.add("devlixe-process", "devlixe-process-ready");
+        section.querySelector(".chip").classList.add("devlixe-process__chip");
+        title.classList.add("devlixe-process__title");
+        description.classList.add("devlixe-process__description");
+        title.innerHTML = 'From Idea to Impact in <strong>6 Focused Steps</strong>';
+        description.textContent =
+          "A clear product journey from early scope and strategy through launch, growth, and continuous improvement.";
+        stepsContainer.classList.add("devlixe-process-original");
+        compactGrid.className = "devlixe-process-grid";
+
+        steps.forEach(function (step, stepIndex) {
+          var originalCopy = Array.from(step.querySelectorAll("p"))
+            .map(function (item) {
+              return item.textContent.replace(/\s+/g, " ").trim();
+            })
+            .find(function (text) {
+              return text.length > 35;
+            });
+          var card = document.createElement("article");
+          var top = document.createElement("div");
+          var number = document.createElement("span");
+          var route = document.createElement("span");
+          var cardTitle = document.createElement("h3");
+          var cardCopy = document.createElement("p");
+
+          card.className = "devlixe-process-card devlixe-process-card-reveal";
+          card.style.setProperty(
+            "--process-card-delay",
+            (stepIndex % 3) * 150 + "ms",
+          );
+          top.className = "devlixe-process-card__top";
+          number.className = "devlixe-process-card__number";
+          number.textContent = String(stepIndex + 1).padStart(2, "0");
+          route.className = "devlixe-process-card__route";
+          cardTitle.textContent = compactTitles[stepIndex];
+          cardCopy.textContent = shortenText(originalCopy || "", 178);
+          top.append(number, route);
+          card.append(top, cardTitle, cardCopy);
+          compactGrid.appendChild(card);
+          compactCards.push(card);
+        });
+
+        stepsContainer.insertAdjacentElement("afterend", compactGrid);
       }
 
-      revealItems.forEach(function (item, index) {
-        item.classList.add("devlixe-process-reveal");
-        item.style.setProperty(
-          "--process-reveal-delay",
-          180 + index * 130 + "ms",
-        );
-      });
-
-      var originalCopy = Array.from(step.querySelectorAll("p"))
-        .map(function (item) {
-          return item.textContent.replace(/\s+/g, " ").trim();
-        })
-        .find(function (text) {
-          return text.length > 35;
+      var revealTargets = steps.concat(compactCards);
+      if (reducedMotion || !("IntersectionObserver" in window)) {
+        revealTargets.forEach(function (target) {
+          target.classList.add("is-visible");
         });
-      var card = document.createElement("article");
-      var top = document.createElement("div");
-      var number = document.createElement("span");
-      var route = document.createElement("span");
-      var cardTitle = document.createElement("h3");
-      var cardCopy = document.createElement("p");
+        return;
+      }
 
-      card.className = "devlixe-process-card";
-      top.className = "devlixe-process-card__top";
-      number.className = "devlixe-process-card__number";
-      number.textContent = String(stepIndex + 1).padStart(2, "0");
-      route.className = "devlixe-process-card__route";
-      cardTitle.textContent = compactTitles[stepIndex];
-      cardCopy.textContent = shortenText(originalCopy || "", 178);
-      top.append(number, route);
-      card.append(top, cardTitle, cardCopy);
-      compactGrid.appendChild(card);
-    });
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          });
+        },
+        {
+          threshold: 0.16,
+          rootMargin: "0px 0px -10% 0px",
+        },
+      );
 
-    stepsContainer.insertAdjacentElement("afterend", compactGrid);
-
-    section.classList.add("devlixe-process-ready");
-
-    if (reducedMotion || !("IntersectionObserver" in window)) {
-      steps.forEach(function (step) {
-        step.classList.add("is-visible");
+      revealTargets.forEach(function (target) {
+        observer.observe(target);
       });
-      return;
-    }
-
-    var observer = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add("is-visible");
-          observer.unobserve(entry.target);
-        });
-      },
-      {
-        threshold: 0.18,
-        rootMargin: "0px 0px -12% 0px",
-      },
-    );
-
-    steps.forEach(function (step) {
-      observer.observe(step);
     });
   }
 
@@ -1282,14 +1302,24 @@
     var pageWhite = { red: 255, green: 255, blue: 255, alpha: 1 };
 
     while (current && current.nodeType === 1) {
+      if (
+        current.classList.contains("bg-darkBlue") ||
+        current.classList.contains("bg-green-dark-gradient") ||
+        current.classList.contains("bg-green-dark-br-gradient") ||
+        current.classList.contains("bg-green-dark-t-b") ||
+        current.classList.contains("bg-dark-green-bright-br") ||
+        current.classList.contains("bg-darkGreen") ||
+        current.classList.contains("bg-black") ||
+        current.classList.contains("devlixe-process-card") ||
+        current.classList.contains("devlixe-story-card__body")
+      ) {
+        return { red: 20, green: 48, blue: 67, alpha: 1 };
+      }
+
       var style = window.getComputedStyle(current);
       var color = parseCssColor(style.backgroundColor);
 
       if (color && color.alpha >= 0.84) return compositeColor(color, pageWhite);
-
-      if (current.classList.contains("bg-darkBlue")) {
-        return { red: 23, green: 38, blue: 58, alpha: 1 };
-      }
 
       if (current.classList.contains("testimonial-section")) {
         return { red: 16, green: 34, blue: 56, alpha: 1 };

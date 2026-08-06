@@ -1176,6 +1176,64 @@
   transform: translateY(0);
 }
 
+/* Every service journey uses the same progressive, scroll-triggered reveal. */
+.devlixe-journey-ready .devlixe-process-connector {
+  opacity: 0;
+  filter: drop-shadow(0 0 0 rgba(59, 206, 191, 0));
+  transition:
+    clip-path 1050ms linear,
+    opacity 220ms ease,
+    filter 1050ms ease;
+  will-change: clip-path, opacity;
+}
+
+.devlixe-journey-ready .devlixe-process-connector.is-horizontal {
+  clip-path: inset(0 100% 0 0);
+}
+
+.devlixe-journey-ready .devlixe-process-connector.is-vertical {
+  clip-path: inset(0 0 100% 0);
+}
+
+.devlixe-journey-ready .devlixe-process-reveal {
+  opacity: 0;
+  transform: translateY(42px);
+  transition:
+    opacity 680ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 780ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--process-reveal-delay, 0ms);
+  will-change: transform, opacity;
+}
+
+.devlixe-journey-ready
+  .devlixe-process-step.is-visible
+  .devlixe-process-connector {
+  opacity: 1;
+  clip-path: inset(0 0 0 0);
+  filter: drop-shadow(0 0 15px rgba(59, 206, 191, 0.58));
+}
+
+.devlixe-journey-ready
+  .devlixe-process-step.is-visible
+  .devlixe-process-reveal {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.devlixe-process-card-reveal {
+  opacity: 0;
+  transform: translateY(34px);
+  transition:
+    opacity 620ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--process-card-delay, 0ms);
+}
+
+.devlixe-process-card-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .devlixe-portfolio-slider {
   overflow: hidden;
   padding: 8px 0 18px;
@@ -1710,8 +1768,19 @@
   .devlixe-simple-slider .swiper-wrapper,
   .devlixe-logo-marquee__logo,
   .devlixe-process-ready .devlixe-process-connector,
-  .devlixe-process-ready .devlixe-process-reveal {
+  .devlixe-process-ready .devlixe-process-reveal,
+  .devlixe-journey-ready .devlixe-process-connector,
+  .devlixe-journey-ready .devlixe-process-reveal,
+  .devlixe-process-card-reveal {
     transition: none;
+  }
+
+  .devlixe-journey-ready .devlixe-process-connector,
+  .devlixe-journey-ready .devlixe-process-reveal,
+  .devlixe-process-card-reveal {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transform: none;
   }
 }
 
@@ -1890,6 +1959,14 @@ html .devlixe-contrast-heading-on-light {
 
 html .devlixe-contrast-copy-on-light {
   color: var(--devlixe-copy) !important;
+}
+
+/* Preserve the source design's white typography on dark/gradient cards. */
+html .bg-green-dark-gradient :is(h1, h2, h3, h4, h5, h6, p, li),
+html .bg-green-dark-br-gradient :is(h1, h2, h3, h4, h5, h6, p, li),
+html .bg-green-dark-t-b :is(h1, h2, h3, h4, h5, h6, p, li),
+html .bg-dark-green-bright-br :is(h1, h2, h3, h4, h5, h6, p, li) {
+  color: #fff !important;
 }
 
 html .bg-darkBlue .grid > * {
