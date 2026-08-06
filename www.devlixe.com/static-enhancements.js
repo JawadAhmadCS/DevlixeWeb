@@ -818,6 +818,68 @@
     show(0);
   }
 
+  function initChatbotLanding() {
+    var heading = Array.from(document.querySelectorAll("h1, h2")).find(
+      function (item) {
+        return item.textContent.trim().startsWith("Smart chatbots that sell");
+      },
+    );
+    var section = heading && heading.closest("section");
+    if (!section || section.dataset.chatbotEnhanced === "true") return;
+
+    var grid = heading.closest(".grid");
+    var columns = grid ? directChildren(grid, "div") : [];
+    var copyColumn = columns.find(function (column) {
+      return column.contains(heading);
+    });
+    var mediaColumn = columns.find(function (column) {
+      return column !== copyColumn && column.querySelector("img");
+    });
+    var description = copyColumn
+      ? Array.from(copyColumn.querySelectorAll("p")).find(function (item) {
+          return item.textContent.trim().length > 55;
+        })
+      : null;
+    var labels = [
+      "Customer Support",
+      "Order Status Tracking",
+      "Appointment Booking",
+      "Balance Inquiry",
+      "Multilingual Voice Support",
+      "Product Information",
+      "Travel Booking",
+      "Lead Qualification",
+    ];
+    var rail = document.createElement("div");
+    var track = document.createElement("div");
+
+    section.dataset.chatbotEnhanced = "true";
+    section.classList.add("devlixe-chatbot-hero");
+    if (grid) grid.classList.add("devlixe-chatbot-hero__grid");
+    if (copyColumn) copyColumn.classList.add("devlixe-chatbot-hero__copy");
+    if (mediaColumn) mediaColumn.classList.add("devlixe-chatbot-hero__media");
+    heading.classList.add("devlixe-chatbot-hero__title");
+    if (description) description.classList.add("devlixe-chatbot-hero__description");
+
+    rail.className = "devlixe-use-case-rail";
+    rail.setAttribute("aria-label", "AI chatbot use cases");
+    track.className = "devlixe-use-case-rail__track";
+    [false, true].forEach(function (duplicate) {
+      var sequence = document.createElement("div");
+      sequence.className = "devlixe-use-case-rail__sequence";
+      if (duplicate) sequence.setAttribute("aria-hidden", "true");
+      labels.forEach(function (label) {
+        var item = document.createElement("span");
+        item.className = "devlixe-use-case-rail__item";
+        item.textContent = label;
+        sequence.appendChild(item);
+      });
+      track.appendChild(sequence);
+    });
+    rail.appendChild(track);
+    section.appendChild(rail);
+  }
+
   function initIndustryTabs() {
     var section = Array.from(document.querySelectorAll("section")).find(
       function (item) {
@@ -904,13 +966,29 @@
 
     if (!title || !description || steps.length !== 6) return;
 
+    var compactGrid = document.createElement("div");
+    var compactTitles = [
+      "Get a Ballpark",
+      "Product Strategy & Engineering Discovery",
+      "Custom Product Development",
+      "Initial Product Launch",
+      "Go-to-Market",
+      "Continuous Optimization & Updates",
+    ];
+
     section.dataset.processEnhanced = "true";
+    if (!section.id) section.id = "our-process";
     section.classList.add("devlixe-process");
     section.querySelector(".chip").classList.add("devlixe-process__chip");
     title.classList.add("devlixe-process__title");
     description.classList.add("devlixe-process__description");
+    title.innerHTML = 'From Idea to Impact in <strong>6 Focused Steps</strong>';
+    description.textContent =
+      "A clear product journey from early scope and strategy through launch, growth, and continuous improvement.";
+    stepsContainer.classList.add("devlixe-process-original");
+    compactGrid.className = "devlixe-process-grid";
 
-    steps.forEach(function (step) {
+    steps.forEach(function (step, stepIndex) {
       var connector = directChildren(step, "div").find(function (item) {
         return item.querySelector('img[alt="progress"]');
       });
@@ -942,7 +1020,34 @@
           180 + index * 130 + "ms",
         );
       });
+
+      var originalCopy = Array.from(step.querySelectorAll("p"))
+        .map(function (item) {
+          return item.textContent.replace(/\s+/g, " ").trim();
+        })
+        .find(function (text) {
+          return text.length > 35;
+        });
+      var card = document.createElement("article");
+      var top = document.createElement("div");
+      var number = document.createElement("span");
+      var route = document.createElement("span");
+      var cardTitle = document.createElement("h3");
+      var cardCopy = document.createElement("p");
+
+      card.className = "devlixe-process-card";
+      top.className = "devlixe-process-card__top";
+      number.className = "devlixe-process-card__number";
+      number.textContent = String(stepIndex + 1).padStart(2, "0");
+      route.className = "devlixe-process-card__route";
+      cardTitle.textContent = compactTitles[stepIndex];
+      cardCopy.textContent = shortenText(originalCopy || "", 178);
+      top.append(number, route);
+      card.append(top, cardTitle, cardCopy);
+      compactGrid.appendChild(card);
     });
+
+    stepsContainer.insertAdjacentElement("afterend", compactGrid);
 
     section.classList.add("devlixe-process-ready");
 
@@ -1007,7 +1112,7 @@
     var details = document.createElement("div");
     var company = document.createElement("p");
     var role = document.createElement("p");
-    var stars = document.createElement("div");
+    var quoteMark = document.createElement("div");
     var initials = story.company
       .split(/\s+/)
       .slice(0, 2)
@@ -1022,7 +1127,7 @@
     if (duplicate) card.setAttribute("aria-hidden", "true");
 
     quote.className = "devlixe-testimonial-card__quote";
-    quote.textContent = "“" + story.quote + "”";
+    quote.textContent = story.quote;
     footer.className = "devlixe-testimonial-card__footer";
     avatar.className = "devlixe-testimonial-card__avatar";
     avatar.style.setProperty("--testimonial-avatar", story.color);
@@ -1032,13 +1137,13 @@
     company.textContent = story.company;
     role.className = "devlixe-testimonial-card__role";
     role.textContent = story.role;
-    stars.className = "devlixe-testimonial-card__stars";
-    stars.setAttribute("aria-label", "5 out of 5 stars");
-    stars.textContent = "★★★★★";
+    quoteMark.className = "devlixe-testimonial-card__mark";
+    quoteMark.setAttribute("aria-hidden", "true");
+    quoteMark.textContent = "\u201c";
 
-    details.append(company, role, stars);
+    details.append(company, role);
     footer.append(avatar, details);
-    card.append(quote, footer);
+    card.append(quoteMark, quote, footer);
     return card;
   }
 
@@ -1084,7 +1189,7 @@
           role: titleElement
             ? titleElement.textContent.trim()
             : "AI Transformation",
-          quote: shortenText(quoteText, 235),
+          quote: shortenText(quoteText, 165),
           color: colors[index % colors.length],
         };
       })
@@ -1115,6 +1220,7 @@
     }
 
     section.dataset.enhanced = "true";
+    if (!section.id) section.id = "testimonials";
     wrapper.appendChild(createRow(stories, false));
     wrapper.appendChild(createRow(stories.slice().reverse(), true));
   }
@@ -1173,7 +1279,70 @@
       : null;
     if (!wrapper || slides.length < 2 || !section) return;
 
+    slides.forEach(function (slide, index) {
+      var label = Array.from(slide.querySelectorAll("div")).find(function (item) {
+        return item.textContent.trim() === "USE CASE";
+      });
+      var useCase = label && label.nextElementSibling
+        ? label.nextElementSibling.textContent.replace(/\s+/g, " ").trim()
+        : "AI Transformation";
+      var paragraphs = Array.from(slide.querySelectorAll("p"))
+        .map(function (item) {
+          return item.textContent.replace(/\s+/g, " ").trim();
+        })
+        .filter(function (text) {
+          return text.length > 35;
+        });
+      var summary = paragraphs[0] || "";
+      var company = getCompanyName(summary);
+      var image = slide.querySelector("img");
+      var source = image ? image.getAttribute("src") : "";
+      var alt = image ? image.getAttribute("alt") || company : company;
+      var existingMeta = Array.from(slide.querySelectorAll("span"))
+        .map(function (item) {
+          return item.textContent.replace(/\s+/g, " ").trim();
+        })
+        .find(function (text) {
+          return text.indexOf("\u2022") !== -1;
+        });
+      var card = document.createElement("article");
+      var media = document.createElement("div");
+      var cardImage = document.createElement("img");
+      var body = document.createElement("div");
+      var eyebrow = document.createElement("span");
+      var name = document.createElement("h3");
+      var useCaseElement = document.createElement("p");
+      var summaryElement = document.createElement("p");
+      var footer = document.createElement("div");
+      var count = document.createElement("span");
+
+      card.className = "devlixe-story-card";
+      media.className = "devlixe-story-card__media";
+      cardImage.src = source;
+      cardImage.alt = alt;
+      cardImage.loading = "lazy";
+      body.className = "devlixe-story-card__body";
+      eyebrow.className = "devlixe-story-card__eyebrow";
+      eyebrow.textContent = "Customer Story";
+      name.textContent = company;
+      useCaseElement.className = "devlixe-story-card__use-case";
+      useCaseElement.textContent = useCase;
+      summaryElement.className = "devlixe-story-card__summary";
+      summaryElement.textContent = shortenText(summary, 210);
+      footer.className = "devlixe-story-card__footer";
+      footer.textContent = existingMeta || "AI solution by Devlixe";
+      count.className = "devlixe-story-card__count";
+      count.textContent = String(index + 1).padStart(2, "0");
+
+      media.appendChild(cardImage);
+      footer.appendChild(count);
+      body.append(eyebrow, name, useCaseElement, summaryElement, footer);
+      card.append(media, body);
+      slide.replaceChildren(card);
+    });
+
     root.dataset.enhanced = "true";
+    if (!section.id) section.id = "customer-stories";
     root.classList.add("devlixe-portfolio-slider");
     root.setAttribute("role", "region");
     root.setAttribute("aria-label", "Customer stories");
@@ -1560,6 +1729,7 @@
     initConceptGraph();
     initTrustedLogoMarquee();
     initHeroCarousel();
+    initChatbotLanding();
     initIndustryTabs();
     initServiceTabs();
     initProcessSection();
@@ -1567,6 +1737,13 @@
     initSliders();
     initContactSection();
     initFileUploads();
+
+    if (window.location.hash) {
+      window.requestAnimationFrame(function () {
+        var target = document.getElementById(window.location.hash.slice(1));
+        if (target) target.scrollIntoView({ block: "start" });
+      });
+    }
   }
 
   if (document.readyState === "loading") {
