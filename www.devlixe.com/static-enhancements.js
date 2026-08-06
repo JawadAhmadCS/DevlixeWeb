@@ -1235,8 +1235,82 @@
     var section = panel && panel.closest(".min-h-screen");
     if (!panel || !section) return;
 
+    if (!section.id) section.id = "contact";
     section.classList.add("devlixe-contact-section");
     panel.classList.add("devlixe-contact-panel");
+  }
+
+  function initBookingLinks() {
+    if (document.documentElement.dataset.bookingLinksEnhanced === "true") return;
+
+    var contactSection = document.getElementById("contact");
+    var enhancementScript = Array.from(document.scripts).find(function (script) {
+      return /(?:^|\/)static-enhancements\.js(?:\?|$)/.test(script.src);
+    });
+    var siteBaseUrl = enhancementScript
+      ? new URL(".", enhancementScript.src)
+      : new URL(".", window.location.href);
+    var localDestination = contactSection
+      ? "#contact"
+      : new URL("index.html#contact", siteBaseUrl).href;
+    var retiredBookingUrl = /(?:calendly\.com\/(?:devlixe|devlixe-info)\/30min|api\.leadconnectorhq\.com\/widget\/bookings\/devlixe|cal\.com\/devlixe\/ai-voice-employee)/i;
+
+    function shouldReplace(link) {
+      var href = link.getAttribute("href") || "";
+      var isButtonLink = Boolean(link.querySelector("button"));
+      var isMissingHashTarget = false;
+
+      if (isButtonLink && href.charAt(0) === "#") {
+        var targetId = href.slice(1);
+        isMissingHashTarget = !targetId || !document.getElementById(targetId);
+      }
+
+      return retiredBookingUrl.test(href) || isMissingHashTarget;
+    }
+
+    function normalizeLink(link) {
+      if (!link || !shouldReplace(link)) return;
+
+      var href = link.getAttribute("href") || "";
+
+      link.dataset.originalBookingHref = href;
+      link.href = localDestination;
+      link.removeAttribute("target");
+      link.removeAttribute("rel");
+      link.setAttribute("data-booking-link", "contact");
+    }
+
+    function normalizeWithin(root) {
+      if (root.matches && root.matches("a[href]")) normalizeLink(root);
+      if (root.querySelectorAll) {
+        root.querySelectorAll("a[href]").forEach(normalizeLink);
+      }
+    }
+
+    document.documentElement.dataset.bookingLinksEnhanced = "true";
+    normalizeWithin(document);
+
+    document.addEventListener(
+      "click",
+      function (event) {
+        var link = event.target.closest && event.target.closest("a[href]");
+        if (!link || !shouldReplace(link)) return;
+        event.preventDefault();
+        window.location.assign(localDestination);
+      },
+      true,
+    );
+
+    if ("MutationObserver" in window) {
+      var observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+          mutation.addedNodes.forEach(function (node) {
+            if (node.nodeType === 1) normalizeWithin(node);
+          });
+        });
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
   }
 
   function createSliderControls(root, previous, next, getStatus) {
@@ -1725,6 +1799,23 @@
 
   function init() {
     document.documentElement.classList.add("devlixe-enhancements-ready");
+    initContactSection();
+    initBookingLinks();
+    if (window.location.hash) {
+      var scrollToEarlyHash = function () {
+        var earlyTarget = document.getElementById(window.location.hash.slice(1));
+        if (earlyTarget) earlyTarget.scrollIntoView({ block: "start" });
+      };
+      window.requestAnimationFrame(scrollToEarlyHash);
+      window.addEventListener(
+        "load",
+        function () {
+          window.setTimeout(scrollToEarlyHash, 180);
+        },
+        { once: true },
+      );
+      window.setTimeout(scrollToEarlyHash, 700);
+    }
     initHeaderMegaMenus();
     initConceptGraph();
     initTrustedLogoMarquee();
@@ -1735,7 +1826,6 @@
     initProcessSection();
     initTestimonials();
     initSliders();
-    initContactSection();
     initFileUploads();
 
     if (window.location.hash) {
